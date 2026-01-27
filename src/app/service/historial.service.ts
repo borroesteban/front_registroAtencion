@@ -13,4 +13,7 @@ export class HistorialService {
   getHistorialList():Observable<Historial []>{
     return this.http.get<Historial[]>(this.api);
   }
+  createHistorial(historial: Historial):Observable<Historial>{
+    return this.http.post<Historial>(`${this.api}`, historial);
+  }
 }

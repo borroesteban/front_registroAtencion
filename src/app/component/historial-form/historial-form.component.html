@@ -1,0 +1,46 @@
+
+
+<h2>Nuevo historial</h2>
+
+<form [formGroup]="historialForm" (ngSubmit)="submit()">
+
+  <!-- Persona -->
+  <div class="mb-3">
+    <label class="form-label">Persona</label>
+    <select class="form-select" formControlName="personaId">
+      <option [ngValue]="null">Seleccione una persona</option>
+      <option *ngFor="let p of personas" [ngValue]="p.id">
+        {{ p.firstName }} {{ p.lastName }}
+      </option>
+    </select>
+  </div>
+
+  <!-- Motivo -->
+  <div class="mb-3">
+    <label class="form-label">Motivo</label>
+    <select class="form-select" formControlName="motivoId">
+      <option [ngValue]="null">Seleccione un motivo</option>
+      <option *ngFor="let m of motivos" [ngValue]="m.motivoId">
+        {{ m.motivo }}
+      </option>
+    </select>
+  </div>
+
+  <!-- Observaciones -->
+  <div class="mb-3">
+    <label class="form-label">Observaciones</label>
+    <textarea class="form-control" formControlName="notes"></textarea>
+  </div>
+
+  <!-- Botones -->
+  <button type="submit" class="btn btn-success">
+    Guardar
+  </button>
+
+  <button type="button"
+          class="btn btn-secondary ms-2"
+          [routerLink]="['/historial']">
+    Volver
+  </button>
+
+</form>

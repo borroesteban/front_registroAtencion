@@ -1,12 +1,12 @@
-import { Motivo } from "./motivo";
-import { Persona } from "./Persona";
+import { Persona } from './Persona';
+import { Motivo } from './motivo';
 
-export class Historial {
-    constructor(
-        public historialId: number,
-        public notes: string,
-        public persona : Persona,
-        public motivo : Motivo,
-        public timeStamp : Date,
-        ){}
+export interface Historial {
+  historialId?: number;
+  notes?: string | null;
+  timeStamp?: string;        // viene del backend
+  persona?: Persona | null;
+  motivo?: Motivo | null;
 }
+
+
