@@ -10,11 +10,7 @@ import { RouterOutlet, RouterLink } from '@angular/router';
   imports: [RouterOutlet, RouterLink],
   template: 
   `
-   <h1>Gestión</h1>
 
-    <button routerLink="/personas">Personas</button>
-    <button routerLink="/motivos">Motivos</button>
-    <button routerLink="/historial">Historial</button>
 
 
     <hr>

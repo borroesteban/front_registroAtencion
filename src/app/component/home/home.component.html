@@ -1,69 +1,10 @@
-<div class="container-fluid mt-3">
-  <div class="row">
+<h3 class="text-center mb-4">Programa de Registro</h3>
 
-    <!-- COLUMNA IZQUIERDA: menú -->
-    <div class="col-2 border-end">
-      <h6>Acciones</h6>
-
-      <button
-        class="btn btn-sm btn-success w-100 mb-2"
-        (click)="openHistorialForm()">
-        + Registrar atención
-      </button>
-
-      <button
-        class="btn btn-sm btn-primary w-100 mb-2"
-        (click)="openPersonaForm()">
-        + Nueva Persona
-      </button>
-
-      <button
-        class="btn btn-sm btn-secondary w-100 mb-2"
-        (click)="openMotivoForm()">
-        + Nuevo Motivo
-      </button>
-
-      <hr />
-
-      <small class="text-muted">
-        Próximamente…
-      </small>
-    </div>
-
-    <!-- COLUMNA CENTRAL: contenido cambiante -->
-    <div class="col-3">
-
-      <!-- FORM REGISTRO ATENCIÓN -->
-      <div *ngIf="activeView === 'historial'">
-        <h5>Registrar atención</h5>
-        <app-historial-form></app-historial-form>
-      </div>
-
-      <!-- FORM REGISTRO PERSONA -->
-      <div *ngIf="activeView === 'persona'">
-        <h5>Nueva persona</h5>
-        <app-persona-form></app-persona-form>
-      </div>
-
-      <!-- FORM REGISTRO MOTIVO -->
-      <div *ngIf="activeView === 'motivo'">
-        <h5>Nuevo motivo</h5>
-        <app-motivo-form (cancel)="activeView = null"></app-motivo-form>
-
-      </div>
-
-      <!-- ESTADO INICIAL -->
-      <div *ngIf="!activeView" class="text-muted mt-5">
-        Seleccioná una acción del menú para comenzar
-      </div>
-
-    </div>
-
-    <!-- COLUMNA DERECHA: listado -->
-    <div class="col-7">
-      <h5>Listado de atenciones</h5>
-      <app-historial-list></app-historial-list>
-    </div>
-
-  </div>
-</div>
+<input
+  inputmode="numeric"  
+  type="text"
+  class="form-control text-center mx-auto"
+  style="width: 50%;"
+  placeholder="Ingrese DNI..."
+  (input)="onDniChange($event)"
+>
