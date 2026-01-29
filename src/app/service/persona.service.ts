@@ -21,5 +21,9 @@ export class PersonaService {
   }
   createPersona(persona: Persona): Observable<Persona> {
     return this.http.post<Persona>(this.api, persona);
-}
+  }
+
+  buscarPorDni(dni:string):Observable<any>{
+    return this.http.get(`${this.api}/dni${dni}`);
+  }
 }

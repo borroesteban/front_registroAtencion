@@ -8,3 +8,14 @@
   placeholder="Ingrese DNI..."
   (input)="onDniChange($event)"
 >
+<div *ngIf="personaEncontrada" class="text-center mt-3">
+  ✅ Persona encontrada: 
+  <b>{{ personaEncontrada.firstName }} {{ personaEncontrada.lastName }}</b>
+</div>
+<div *ngIf="errorDni" class="text-center mt-3 text-danger">
+  ❌ {{ errorDni }}
+  <br>
+  <button class="btn btn-primary mt-2" (click)="openPersonaForm()">
+    Crear nueva persona
+  </button>
+</div>
