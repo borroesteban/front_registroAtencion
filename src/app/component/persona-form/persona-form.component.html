@@ -9,48 +9,50 @@
 
 <body>
       <form [formGroup]="personaForm" (ngSubmit)="submit()" style="margin-left:30%; margin-top:5%">
-
-
         <div class="row mb-3">
-          <label for="inputDni" class="col-sm-2 col-form-label">DNI:</label>
+          <label for="dni" class="col-sm-2 col-form-label">DNI:</label>
             <div class="col-sm-5">
-              <input type="text" class="form-control" id="inputDni">
+              <input type="number" class="form-control" id="dni" formControlName="dni">
             </div>
         </div>
 
         <div class="row mb-3">
            <label for="firstName" class="col-sm-2 col-form-label">Nombre:</label>
               <div class="col-sm-5">
-               <input type="text" class="form-control" id="firstName">
+               <input type="text" class="form-control" id="firstName" formControlName="firstName">
               </div>
         </div>
 
         <div class="row mb-3">
            <label for="lastName" class="col-sm-2 col-form-label">Apellido:</label>
               <div class="col-sm-5">
-                <input type="text" class="form-control" id="lastName">
+                <input type="text" class="form-control" id="lastName" formControlName="lastName">
         </div>
       </div>
     
       <div class="row mb-3">
-        <label for="adress" class="col-sm-2 col-form-label">Dirección:</label>
-          <div class="col-sm-5">
-            <input type="text" class="form-control" id="adress">
-          </div>
-      </div>
-  
-      <div class="row mb-3">
         <label for="cellphone" class="col-sm-2 col-form-label">Teléfono:</label>
           <div class="col-sm-5">
-            <input type="text" class="form-control" id="cellphone">
+            <input type="text" class="form-control" id="cellphone" formControlName="cellphone">
           </div>
       </div>
-  
+      
       <div class="row mb-3">
         <label for="email" class="col-sm-2 col-form-label">Email</label>
           <div class="col-sm-5">
-            <input type="email" class="form-control" id="email">
+            <input type="email" class="form-control" id="email" formControlName="email" autocomplete="off" placeholder="usuario@empresa.com">
           </div>
+      </div>
+
+      <div class="row mb-3">
+        <label for="adress" class="col-sm-2 col-form-label">Dirección:</label>
+          <div class="col-sm-5">
+            <input type="text" class="form-control" id="adress" formControlName="adress">
+          </div>
+      </div>
+  
+      <div>
+        <button type="submit" class="btn btn-primary" id="guardarPersona" (click)="submit()">Guardar</button>
       </div>
 </form>
 

@@ -1,13 +1,72 @@
 <h3 class="text-center mb-4">Programa de Registro</h3>
 <input
   inputmode="numeric"  
-  type="text"
+  type="number"
   class="form-control text-center mx-auto"
   style="width: 50%;"
   placeholder="Ingrese DNI..."
-  (input)="onDniChange($event)">
+  (input)="onDniChange($event)" autocomplete="off" id="buscador">
+
+  <form [formGroup]="personaForm">
 
   <div *ngIf="personaEncontrada" class="text-center mt-3 text-success">
+    ✅ Persona encontrada:
+  </div>
+<div *ngIf="personaEncontrada" id="personaEncontrada">
+
+        <div class="row mb-3">
+          <label for="inputDni" class="col-sm-2 col-form-label">DNI:</label>
+            <div class="col-sm-5">
+              <input type="text" class="form-control" id="inputDni" disabled placeholder={{personaEncontrada.dni}}>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+           <label for="firstName" class="col-sm-2 col-form-label">Nombre:</label>
+              <div class="col-sm-5">
+               <input type="text" class="form-control" formControlName="firstName">
+              </div>
+        </div>
+
+        <div class="row mb-3">
+           <label for="lastName" class="col-sm-2 col-form-label">Apellido:</label>
+              <div class="col-sm-5">
+                <input type="text" class="form-control" formControlName="lastName">
+        </div>
+      </div>
+    
+      <div class="row mb-3">
+        <label for="cellphone" class="col-sm-2 col-form-label">Teléfono:</label>
+          <div class="col-sm-5">
+            <input type="text" class="form-control" formControlName="cellphone">
+          </div>
+      </div>
+
+      <div class="row mb-3">
+        <label for="email" class="col-sm-2 col-form-label">Email</label>
+          <div class="col-sm-5">
+            <input type="email" class="form-control" id="email" formControlName="email">
+          </div>
+      </div>
+
+      <div class="row mb-3">
+        <label for="adress" class="col-sm-2 col-form-label">Dirección:</label>
+          <div class="col-sm-5">
+            <input type="text" class="form-control" id="adress" formControlName="adress">
+          </div>
+      </div>
+      
+      <button class="btn btn-warning me-2" (click)="activarEdicion()" *ngIf="personaForm.disabled">Actualizar Datos</button>
+
+<button class="btn btn-danger me-2" (click)="guardarCambios()" *ngIf="modoEdicion">Guardar Cambios</button>
+<button class="btn btn-secondary me-2" *ngIf="modoEdicion" (click)="irAlInicio()">Cancelar</button>
+
+      <button class="btn btn-success" *ngIf="personaForm.disabled">Registrar Atención</button>
+      
+    </div>
+  </form>
+  <!-- esto anda perfecto, estoy probando IA
+   <div *ngIf="personaEncontrada" class="text-center mt-3 text-success">
     ✅ Persona encontrada:
   </div>
 <div *ngIf="personaEncontrada" id="personaEncontrada">
@@ -34,27 +93,28 @@
       </div>
     
       <div class="row mb-3">
-        <label for="adress" class="col-sm-2 col-form-label">Dirección:</label>
-          <div class="col-sm-5">
-            <input type="text" class="form-control" id="adress"disabled placeholder={{personaEncontrada.adress}}>
-          </div>
-      </div>
-  
-      <div class="row mb-3">
         <label for="cellphone" class="col-sm-2 col-form-label">Teléfono:</label>
           <div class="col-sm-5">
             <input type="text" class="form-control" id="cellphone"disabled placeholder={{personaEncontrada.cellphone}}>
           </div>
       </div>
-  
+
       <div class="row mb-3">
         <label for="email" class="col-sm-2 col-form-label">Email</label>
           <div class="col-sm-5">
             <input type="email" class="form-control" id="email"disabled placeholder={{personaEncontrada.email}}>
           </div>
       </div>
+
+      <div class="row mb-3">
+        <label for="adress" class="col-sm-2 col-form-label">Dirección:</label>
+          <div class="col-sm-5">
+            <input type="text" class="form-control" id="adress"disabled placeholder={{personaEncontrada.adress}}>
+          </div>
+      </div>
+  
       <button class="btn btn-warning me-2">Actualizar Datos</button><button class="btn btn-success">Registrar Atención</button>
-</div>
+</div> -->
 
 
 <div *ngIf="errorDni" class="text-center mt-3 text-danger">

@@ -26,4 +26,8 @@ export class PersonaService {
   buscarPorDni(dni:string):Observable<any>{
     return this.http.get(`${this.api}/dni/${dni}`);
   }
+
+actualizarPersona(id: number, persona: any) {
+  return this.http.put(`${this.api}/${id}`, persona);
+}
 }

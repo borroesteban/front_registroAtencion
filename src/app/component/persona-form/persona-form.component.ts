@@ -14,6 +14,7 @@ import { CommonModule } from '@angular/common';
 export class PersonaFormComponent {
 
   personaForm: FormGroup;
+  static personaForm: any;
 
   constructor(
     private fb: FormBuilder,
@@ -31,12 +32,15 @@ export class PersonaFormComponent {
     });
   }
 
+ 
+
   submit() {
     if (this.personaForm.valid) {
       // Aseguramos que personaForm nunca es undefined con !
       this.personaService.createPersona(this.personaForm!.value).subscribe(() => {
         alert('Persona creada con éxito');
-        this.router.navigate(['/personas']); // vuelve a la lista
+        this.router.navigate(['']);
+        window.location.reload();
       });
     } else {
       alert('Complete los campos obligatorios');
