@@ -5,6 +5,7 @@ import { PersonaFormComponent } from '../persona-form/persona-form.component';
 import { FormGroup, FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink, Router} from '@angular/router';
 import { LoginComponent } from '../login/login.component';
+import { AuthService } from '../../service/auth.service';
 
 
 
@@ -18,6 +19,7 @@ import { LoginComponent } from '../login/login.component';
 })
 export class HomeComponent implements OnInit {
 
+  isLoginModalOpen = false;
   showPersonaForm = false;
 
   dni!: number;
@@ -31,8 +33,37 @@ export class HomeComponent implements OnInit {
   constructor(
     private personaService: PersonaService,
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private auth: AuthService
   ) {}
+
+  get isLoggedIn(): boolean {
+    return this.auth.isLoggedIn();
+  }
+
+  get username(): string {
+    return this.auth.getUsername() ?? 'usuario';
+  }
+
+  onLogout(): void {
+    this.auth.logout().subscribe(() => {
+      this.closeLoginModal();
+      this.router.navigate(['/inicio']);
+    });
+  }
+
+  openLoginModal(): void {
+    this.isLoginModalOpen = true;
+  }
+
+  closeLoginModal(): void {
+    this.isLoginModalOpen = false;
+  }
+
+  onLoginSuccess(): void {
+    this.closeLoginModal();
+    this.auth.ensureUsername().subscribe();
+  }
 
 
   irAlInicio() {
@@ -50,6 +81,8 @@ export class HomeComponent implements OnInit {
       email: [''],
       adress: ['']
     });
+
+    this.auth.ensureUsername().subscribe();
   }
 
   openPersonaForm(){

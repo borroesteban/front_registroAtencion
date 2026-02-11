@@ -15,24 +15,54 @@
   <div class="d-flex">
     <li>
       
-      <!-- Button trigger modal -->
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-  Login
-</button>
+      <div class="position-absolute top-1 end-0 me-3 d-flex align-items-center gap-2">
+        <!-- Button trigger modal -->
+        <button
+          id="btnLogin"
+          type="button"
+          class="btn btn-primary"
+          [class.d-none]="isLoggedIn"
+          (click)="openLoginModal()"
+        >
+          Login
+        </button>
+
+        <span class="fw-semibold text-dark" [class.d-none]="!isLoggedIn">
+          Hola, {{ username }}
+        </span>
+
+        <button
+          id="btnLogout"
+          type="button"
+          class="btn btn-danger"
+          [class.d-none]="!isLoggedIn"
+          (click)="onLogout()"
+        >
+          Logout
+        </button>
+      </div>
 
 <!-- Modal -->
-<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+<div
+  class="modal fade"
+  id="staticBackdrop"
+  tabindex="-1"
+  aria-labelledby="staticBackdropLabel"
+  [class.show]="isLoginModalOpen"
+  [style.display]="isLoginModalOpen ? 'block' : 'none'"
+  [attr.aria-hidden]="!isLoginModalOpen"
+>
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <h1 class="modal-title fs-5" id="staticBackdropLabel">Panel de Ingreso</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <button type="button" class="btn-close" (click)="closeLoginModal()" aria-label="Close"></button>
       </div>
       <div class="contenedor-centrado">
       <div class="modal-body">
 
         <!-- form acceso de usuario -->
-        <app-login></app-login>
+        <app-login (loginSuccess)="onLoginSuccess()"></app-login>
 
 <!--         <form action="">
           <label for="">Usuario</label>
@@ -49,6 +79,7 @@
     </div>
   </div>
 </div>
+<div class="modal-backdrop fade show" *ngIf="isLoginModalOpen" (click)="closeLoginModal()"></div>
     </li>
   </div>
 </ul>
@@ -62,7 +93,7 @@
   placeholder="Ingrese DNI..."
   (input)="onDniChange($event)" autocomplete="off" id="buscador">
 
-  <form [formGroup]="personaForm">
+  <form [formGroup]= "personaForm">
 
   <div *ngIf="personaEncontrada" class="text-center mt-3 text-success">
     ✅ Persona encontrada:
@@ -120,59 +151,10 @@
       
     </div>
   </form>
-  <!-- esto anda perfecto, estoy probando IA
-   <div *ngIf="personaEncontrada" class="text-center mt-3 text-success">
-    ✅ Persona encontrada:
-  </div>
-<div *ngIf="personaEncontrada" id="personaEncontrada">
-
-        <div class="row mb-3">
-          <label for="inputDni" class="col-sm-2 col-form-label">DNI:</label>
-            <div class="col-sm-5">
-              <input type="text" class="form-control" id="inputDni" disabled placeholder={{personaEncontrada.dni}}>
-            </div>
-        </div>
-
-        <div class="row mb-3">
-           <label for="firstName" class="col-sm-2 col-form-label">Nombre:</label>
-              <div class="col-sm-5">
-               <input type="text" class="form-control" id="firstName"disabled placeholder={{personaEncontrada.firstName}}>
-              </div>
-        </div>
-
-        <div class="row mb-3">
-           <label for="lastName" class="col-sm-2 col-form-label">Apellido:</label>
-              <div class="col-sm-5">
-                <input type="text" class="form-control" id="lastName"disabled placeholder={{personaEncontrada.lastName}}>
-        </div>
-      </div>
-    
-      <div class="row mb-3">
-        <label for="cellphone" class="col-sm-2 col-form-label">Teléfono:</label>
-          <div class="col-sm-5">
-            <input type="text" class="form-control" id="cellphone"disabled placeholder={{personaEncontrada.cellphone}}>
-          </div>
-      </div>
-
-      <div class="row mb-3">
-        <label for="email" class="col-sm-2 col-form-label">Email</label>
-          <div class="col-sm-5">
-            <input type="email" class="form-control" id="email"disabled placeholder={{personaEncontrada.email}}>
-          </div>
-      </div>
-
-      <div class="row mb-3">
-        <label for="adress" class="col-sm-2 col-form-label">Dirección:</label>
-          <div class="col-sm-5">
-            <input type="text" class="form-control" id="adress"disabled placeholder={{personaEncontrada.adress}}>
-          </div>
-      </div>
   
-      <button class="btn btn-warning me-2">Actualizar Datos</button><button class="btn btn-success">Registrar Atención</button>
-</div> -->
 
 
-<div *ngIf="errorDni" class="text-center mt-3 text-danger">
+<div *ngIf="errorDni"  class="text-center mt-3 text-danger">
   ❌ {{ errorDni }}
   <br>
   <button class="btn btn-primary mt-2" (click)="openPersonaForm()">Crear nueva persona</button>

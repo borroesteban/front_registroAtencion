@@ -1,28 +1,9 @@
-<!-- 
-         <form (ngSubmit)="submit()">
-          <label for="">Usuario</label>
-          <input [(ngModel)] = "username" type="text" placeholder="usuario">
-          <label for="">Contraseña</label>
-          <input [(ngModel)]="password" type="password" placeholder="password">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-        <button type="button" class="btn btn-primary" (click)="submit()">Confirmar</button>
-        </form>
- -->
-<!-- 
-    <form (ngSubmit)="submit()">
-      <input [(ngModel)]="username" name="username" placeholder="usuario" />
-      <input [(ngModel)]="password" name="password" placeholder="password" type="password" />
-      <button type="submit">Entrar</button>
-    </form> -->
-
-    <form >
+<form (ngSubmit)="submit()">
   <label>Usuario</label>
   <input name="username" [(ngModel)]="username" type="text" placeholder="usuario" />
 
-  <label>Contraseña</label>
+  <label>Contrasena</label>
   <input name="password" [(ngModel)]="password" type="password" placeholder="password" />
 
-  <button type="submit" class="btn btn-primary" (click)="submit()">Confirmar</button>
- <!--  <button (click)="callLogout()">logout</button> -->
-  <button type="submit" class="btn btn-secondary" (click)="callLogout()">Logout</button>
+  <button type="submit" class="btn btn-primary">Confirmar</button>
 </form>
