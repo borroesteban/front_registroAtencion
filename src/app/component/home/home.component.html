@@ -1,57 +1,18 @@
-<div id="navBar">
-<ul class="nav nav-tabs">
-  <li class="nav-item">
-    <a class="nav-link active" aria-current="page" href="#">Inicio</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" href="#">Registros</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" href="#">Panel de administracion</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link disabled" aria-disabled="true">Disabled</a>
-  </li>
-  <div class="d-flex">
-    <li>
-      
-      <div class="position-absolute top-1 end-0 me-3 d-flex align-items-center gap-2">
-        <!-- Button trigger modal -->
-        <button
-          id="btnLogin"
-          type="button"
-          class="btn btn-primary"
-          [class.d-none]="isLoggedIn"
-          (click)="openLoginModal()"
-        >
-          Login
-        </button>
+<app-navbar></app-navbar>
 
-        <span class="fw-semibold text-dark" [class.d-none]="!isLoggedIn">
-          Hola, {{ username }}
-        </span>
+<!-- el Modal que sale -->
 
-        <button
-          id="btnLogout"
-          type="button"
-          class="btn btn-danger"
-          [class.d-none]="!isLoggedIn"
-          (click)="onLogout()"
-        >
-          Logout
-        </button>
-      </div>
+<div class="modal fade"
+ id="staticBackdrop" 
+ data-bs-backdrop="static" 
+ data-bs-keyboard="false" 
+ tabindex="-1" 
+ aria-labelledby="staticBackdropLabel" 
+ aria-hidden="true"
+[class.show]="isLoginModalOpen"
+[style.display]="isLoginModalOpen ? 'block' : 'none'"
+[attr.aria-hidden]="!isLoginModalOpen">
 
-<!-- Modal -->
-<div
-  class="modal fade"
-  id="staticBackdrop"
-  tabindex="-1"
-  aria-labelledby="staticBackdropLabel"
-  [class.show]="isLoginModalOpen"
-  [style.display]="isLoginModalOpen ? 'block' : 'none'"
-  [attr.aria-hidden]="!isLoginModalOpen"
->
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -61,29 +22,18 @@
       <div class="contenedor-centrado">
       <div class="modal-body">
 
-        <!-- form acceso de usuario -->
+       <!-- carga del login -->
         <app-login (loginSuccess)="onLoginSuccess()"></app-login>
-
-<!--         <form action="">
-          <label for="">Usuario</label>
-          <input type="text">
-          <label for="">Contraseña</label>
-          <input type="password">
-        </form> -->
-
       </div>
       </div>
       <div class="modal-footer">
-
       </div>
     </div>
   </div>
+  <div class="modal-backdrop fade show" *ngIf="isLoginModalOpen" (click)="closeLoginModal()"></div>
 </div>
-<div class="modal-backdrop fade show" *ngIf="isLoginModalOpen" (click)="closeLoginModal()"></div>
-    </li>
-  </div>
-</ul>
-</div>
+
+   
 <h3 class="text-center mb-4">Programa de Registro</h3>
 <input
   inputmode="numeric"  
@@ -106,7 +56,7 @@
               <input type="text" class="form-control" formControlName="dni" >
             </div>
         </div>
-<!-- id="inputDni" disabled placeholder={{personaEncontrada.dni}} -->
+
         <div class="row mb-3">
            <label for="firstName" class="col-sm-2 col-form-label">Nombre:</label>
               <div class="col-sm-5">
@@ -152,8 +102,6 @@
     </div>
   </form>
   
-
-
 <div *ngIf="errorDni"  class="text-center mt-3 text-danger">
   ❌ {{ errorDni }}
   <br>

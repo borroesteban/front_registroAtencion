@@ -2,6 +2,11 @@
   --bs-table-hover-bg: #193387; /* color del hover */
   --bs-table-hover-color: #ffffff;
 }
+#titulo{
+  align-items: center;
+  text-align: center;
+  font-style: italic;
+}
 /*d1e7dd
 ffeeba
 198754*/

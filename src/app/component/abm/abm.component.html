@@ -1,0 +1,26 @@
+<app-navbar></app-navbar>
+<div class="d-flex">
+  <h2 style="text-align:start;  margin-top: 1%; margin-left:0.5%">Panel de administracion</h2>
+</div> <!-- Faltaba cerrar este div para que no envuelva al resto -->
+
+<div class="container" style="max-width: -webkit-fill-available;">
+  <div class="row" style="margin-top: 2%;">
+    <div class="col-2">
+      <h4 style="text-align:start;">Menu</h4>
+      <ol>
+        <li><button type="button" class="btn btn-outline-secondary" style="margin: 1%;" (click)="showPersonaList()">Listar Personas</button></li>
+        <li><button type="button" class="btn btn-outline-secondary" style="margin: 1%;" (click)="showMotivoList()">Listar Motivos</button></li>
+        <li><button type="button" class="btn btn-outline-secondary" style="margin: 1%;" (click)="showHistorialList()">Listar Historial</button></li>
+      <li>
+        <button > exportar pdf</button>
+      </li>
+      </ol>
+    </div>
+    <div class="col-10" style="text-align: center;">
+      <app-persona-list *ngIf="personaList"></app-persona-list>
+      <app-motivo-list *ngIf="motivoList"></app-motivo-list>
+      <app-historial-list *ngIf="historialList"></app-historial-list>
+    </div>
+  </div>
+</div>
+

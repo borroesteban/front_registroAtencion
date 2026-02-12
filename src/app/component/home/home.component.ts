@@ -3,17 +3,15 @@ import { Component, OnInit } from '@angular/core';
 import { PersonaService } from '../../service/persona.service';
 import { PersonaFormComponent } from '../persona-form/persona-form.component';
 import { FormGroup, FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { RouterLink, Router} from '@angular/router';
+import { Router} from '@angular/router';
 import { LoginComponent } from '../login/login.component';
 import { AuthService } from '../../service/auth.service';
-
-
-
+import { NavbarComponent } from '../navbar/navbar.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, PersonaFormComponent, ReactiveFormsModule, RouterLink, LoginComponent],
+  imports: [CommonModule, PersonaFormComponent, ReactiveFormsModule, LoginComponent, NavbarComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
@@ -142,94 +140,5 @@ export class HomeComponent implements OnInit {
         this.personaForm.disable();
       });
   }
-
-
 submitUser(){}
-
-
 }
-
-
-
-/*
-este archivo anda fenomeno, estoy probando lago de IA
-import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { PersonaService } from '../../service/persona.service';
-import { PersonaFormComponent } from '../persona-form/persona-form.component';
-import { FormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-
-
-@Component({
-  selector: 'app-home',
-  standalone: true,
-  imports: [CommonModule, PersonaFormComponent, FormsModule, ReactiveFormsModule],
-  templateUrl: './home.component.html',
-  styleUrl: './home.component.css'
-})
-export class HomeComponent {
-  
-  
-  openPersonaForm(){
-     this.showPersonaForm = true;       
-  }
-
- closePersonaForm(){
-     this.showPersonaForm = false;       
-  }
-
-  showPersonaForm = false;
-  personaForm!: FormGroup;
-  modoEdicion = false;
-
-  dni!: number;
-  personaEncontrada: any = null;
-  errorDni!: string | number;
-  constructor(
-  private personaService: PersonaService,
-  private fb: FormBuilder
-){}
-
-/*   constructor(private personaService: PersonaService){}
- */
- /* onDniChange(event: Event) {
-    const input = event.target as HTMLInputElement;
-    this.dni = Number(input.value);
-
-    if(this.dni.toString().length >=5){
-      this.buscarPersona();
-    }
-    
-    console.log('DNI ingresado:', this.dni);
-  }
-  
-  buscarPersona() {
-  this.personaService.buscarPorDni(this.dni.toString()).subscribe({
-    next:(persona) => { 
-      this.personaEncontrada = persona;
-      this.errorDni = 0;
-      console.log('Persona encontrada:', persona);
-      this.closePersonaForm();
-    },
-    error: () => {
-      this.personaEncontrada = null;
-      this.errorDni = 'Persona no encontrada';
-    }
-  });
-}
-
-
-/* esto lo trae la ia */
-/*ngOnInit() {
-  this.personaForm = this.fb.group({
-    id: [''],
-    dni: [{value: '', disabled: true}],
-    firstName: [''],
-    lastName: [''],
-    cellphone: [''],
-    email: [''],
-    adress: ['']
-  });
-}*/

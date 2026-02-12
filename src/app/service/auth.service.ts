@@ -2,14 +2,18 @@ import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { isPlatformBrowser } from '@angular/common';
 import { environment } from '../../environments/environment';
-import { tap } from 'rxjs/operators';
-import { catchError, finalize } from 'rxjs/operators';
+import { tap, catchError, finalize } from 'rxjs/operators';
 import { of } from 'rxjs';
+
+
+
 
 interface LoginResponse {
   token: string;
   user: { id: number; username: string };
 }
+
+
 @Injectable({
   providedIn: 'root'
 })
@@ -33,10 +37,6 @@ export class AuthService {
   }
 
     logout() {
-
-      
-      
-      
       const token = this.getToken();
       return this.http
       .post(

@@ -6,6 +6,7 @@ import { HistorialFormComponent } from './component/historial-form/historial-for
 import { PersonaFormComponent } from './component/persona-form/persona-form.component';
 import { MotivoFormComponent } from './component/motivo-form/motivo-form.component';
 import { HomeComponent } from './component/home/home.component';
+import { AbmComponent } from './component/abm/abm.component';
 
 
 export const routes: Routes = [
@@ -15,6 +16,7 @@ export const routes: Routes = [
 {path: 'historial', component: HistorialListComponent},
 {path: 'nuevo-historial', component: HistorialFormComponent},
 {path: 'nueva-persona', component: PersonaFormComponent },
-{ path: 'nuevo-motivo', component: MotivoFormComponent },
+{path: 'nuevo-motivo', component: MotivoFormComponent },
+{path: 'abm',component: AbmComponent},
 {path : '', redirectTo: 'inicio', pathMatch: 'full'}
 ];
