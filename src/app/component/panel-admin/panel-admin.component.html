@@ -100,7 +100,7 @@
           <div class="tag-list" *ngIf="getResolvedUserPermissions(user).length > 0; else noUserPermissions">
             <span class="tag" *ngFor="let permission of getResolvedUserPermissions(user)">
               {{ getPermissionNameEs(permission) }}
-              <button type="button" (click)="removePermissionFromUser(user.id, permission.id)">x</button>
+              <button type="button" (click)="onRemovePermissionFromUser(user.id, permission)">x</button>
             </span>
           </div>
           <ng-template #noUserPermissions><small>Sin permisos directos</small></ng-template>
@@ -111,6 +111,9 @@
 
   <section class="panel-section">
     <h3>Roles (Packs de Permisos)</h3>
+    <button type="button" class="btn btn-sm btn-outline-primary mb-3" (click)="createPanelVisitasRole()">
+      Crear rol ver_panel_visitas
+    </button>
 
     <div class="form-grid">
       <form [formGroup]="createRoleForm" (ngSubmit)="createRole()" class="inline-form">
@@ -146,7 +149,7 @@
           <div class="tag-list" *ngIf="getResolvedRolePermissions(role).length > 0; else noRolePermissions">
             <span class="tag" *ngFor="let permission of getResolvedRolePermissions(role)">
               {{ getPermissionNameEs(permission) }}
-              <button type="button" (click)="removePermissionFromRole(role.id, permission.id)">x</button>
+              <button type="button" (click)="onRemovePermissionFromRole(role.id, permission)">x</button>
             </span>
           </div>
           <ng-template #noRolePermissions><small>Sin permisos en este rol</small></ng-template>

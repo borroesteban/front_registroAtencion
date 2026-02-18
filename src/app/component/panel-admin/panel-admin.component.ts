@@ -216,10 +216,13 @@ export class PanelAdminComponent implements OnInit {
     }
 
     this.adminAccessService.assignPermissionToUser(userId, permissionId).subscribe({
-      next: () => {
+      next: (response) => {
+        const wasUpdated = this.applyUserPermissionsFromResponse(userId, response);
+        if (!wasUpdated) {
+          this.addPermissionToUserLocally(userId, permissionId);
+        }
         this.setFeedback('success', 'Permiso asignado al usuario.');
         this.assignUserPermissionForm.reset();
-        this.refreshData();
       },
       error: () => this.setFeedback('error', 'No se pudo asignar el permiso al usuario.')
     });
@@ -227,12 +230,26 @@ export class PanelAdminComponent implements OnInit {
 
   removePermissionFromUser(userId: number, permissionId: number): void {
     this.adminAccessService.removePermissionFromUser(userId, permissionId).subscribe({
-      next: () => {
+      next: (response) => {
+        this.removePermissionFromUserLocally(userId, permissionId);
+        const wasUpdated = this.applyUserPermissionsFromResponse(userId, response);
         this.setFeedback('success', 'Permiso eliminado del usuario.');
-        this.refreshData();
+        if (!wasUpdated) {
+          // Si backend no devuelve el usuario actualizado, mantenemos el cambio local
+          // y evitamos depender de un GET adicional.
+        }
       },
       error: () => this.setFeedback('error', 'No se pudo eliminar el permiso del usuario.')
     });
+  }
+
+  onRemovePermissionFromUser(userId: number, permission: PermissionItem): void {
+    const permissionId = this.getPermissionId(permission);
+    if (permissionId === null) {
+      this.setFeedback('error', 'No se pudo identificar el permiso a eliminar.');
+      return;
+    }
+    this.removePermissionFromUser(userId, permissionId);
   }
 
   createRole(): void {
@@ -259,6 +276,26 @@ export class PanelAdminComponent implements OnInit {
     });
   }
 
+  createPanelVisitasRole(): void {
+    const roleName = 'ver_panel_visitas';
+    const alreadyExists = this.roles.some((role) => role.name?.trim().toLowerCase() === roleName);
+    if (alreadyExists) {
+      this.setFeedback('success', 'El rol ver_panel_visitas ya existe.');
+      return;
+    }
+
+    this.adminAccessService.createRole({
+      name: roleName,
+      description: 'Permite ver el panel de visitas'
+    }).subscribe({
+      next: (role) => {
+        this.roles = [...this.roles, role];
+        this.setFeedback('success', 'Rol ver_panel_visitas creado correctamente.');
+      },
+      error: () => this.setFeedback('error', 'No se pudo crear el rol ver_panel_visitas.')
+    });
+  }
+
   assignPermissionToRole(): void {
     if (this.assignRolePermissionForm.invalid) {
       this.assignRolePermissionForm.markAllAsTouched();
@@ -272,10 +309,13 @@ export class PanelAdminComponent implements OnInit {
     }
 
     this.adminAccessService.assignPermissionToRole(roleId, permissionId).subscribe({
-      next: () => {
+      next: (response) => {
+        const wasUpdated = this.applyRolePermissionsFromResponse(roleId, response);
         this.setFeedback('success', 'Permiso agregado al rol.');
         this.assignRolePermissionForm.reset();
-        this.refreshData();
+        if (!wasUpdated) {
+          this.refreshData();
+        }
       },
       error: () => this.setFeedback('error', 'No se pudo agregar el permiso al rol.')
     });
@@ -283,12 +323,24 @@ export class PanelAdminComponent implements OnInit {
 
   removePermissionFromRole(roleId: number, permissionId: number): void {
     this.adminAccessService.removePermissionFromRole(roleId, permissionId).subscribe({
-      next: () => {
+      next: (response) => {
+        const wasUpdated = this.applyRolePermissionsFromResponse(roleId, response);
         this.setFeedback('success', 'Permiso eliminado del rol.');
-        this.refreshData();
+        if (!wasUpdated) {
+          this.refreshData();
+        }
       },
       error: () => this.setFeedback('error', 'No se pudo eliminar el permiso del rol.')
     });
+  }
+
+  onRemovePermissionFromRole(roleId: number, permission: PermissionItem): void {
+    const permissionId = this.getPermissionId(permission);
+    if (permissionId === null) {
+      this.setFeedback('error', 'No se pudo identificar el permiso a eliminar del rol.');
+      return;
+    }
+    this.removePermissionFromRole(roleId, permissionId);
   }
 
   deleteUser(userId: number): void {
@@ -356,6 +408,15 @@ export class PanelAdminComponent implements OnInit {
 
   getResolvedUserPermissions(user: UserItem): PermissionItem[] {
     const userRecord = user as unknown as Record<string, unknown>;
+    const directPermissions = userRecord['direct_permissions'];
+    if (Array.isArray(directPermissions) && directPermissions.length > 0) {
+      if (typeof directPermissions[0] === 'object') {
+        return directPermissions as PermissionItem[];
+      }
+      const permissionIds = this.toNumberArray(directPermissions);
+      return this.permissions.filter((permission) => permissionIds.includes(permission.id));
+    }
+
     const permissionsFromUser = userRecord['permissions'];
     if (Array.isArray(permissionsFromUser) && permissionsFromUser.length > 0) {
       if (typeof permissionsFromUser[0] === 'object') {
@@ -395,6 +456,47 @@ export class PanelAdminComponent implements OnInit {
     const record = permission as unknown as Record<string, unknown>;
     const code = record['code'] ?? record['codename'];
     return typeof code === 'string' ? code : '';
+  }
+
+  getPermissionId(permission: PermissionItem): number | null {
+    const record = permission as unknown as Record<string, unknown>;
+    const rawId = record['id'] ?? record['permission_id'] ?? record['permissionId'] ?? record['pk'];
+    if (typeof rawId === 'number' && Number.isFinite(rawId)) {
+      return rawId;
+    }
+    if (typeof rawId === 'string' && rawId.trim()) {
+      const parsed = Number(rawId);
+      return Number.isFinite(parsed) ? parsed : null;
+    }
+
+    const code = this.getPermissionCode(permission);
+    const appLabel = this.getPermissionAppLabel(permission);
+    if (!code) {
+      return null;
+    }
+
+    const resolved = this.permissions.find((candidate) => {
+      const candidateCode = this.getPermissionCode(candidate);
+      const candidateApp = this.getPermissionAppLabel(candidate);
+      if (candidateCode !== code) {
+        return false;
+      }
+      if (appLabel && candidateApp) {
+        return candidateApp === appLabel;
+      }
+      return true;
+    });
+
+    if (!resolved) {
+      return null;
+    }
+
+    const resolvedId = (resolved as unknown as Record<string, unknown>)['id'];
+    if (typeof resolvedId === 'number' && Number.isFinite(resolvedId)) {
+      return resolvedId;
+    }
+
+    return null;
   }
 
   getPermissionAppLabel(permission: PermissionItem): string {
@@ -535,6 +637,155 @@ export class PanelAdminComponent implements OnInit {
   private setFeedback(kind: 'success' | 'error', message: string): void {
     this.feedbackKind = kind;
     this.feedbackMessage = message;
+  }
+
+  private applyRolePermissionsFromResponse(roleId: number, response: unknown): boolean {
+    const permissions = this.extractPermissionsFromRoleResponse(response);
+    if (!permissions) {
+      return false;
+    }
+
+    const roleIndex = this.roles.findIndex((role) => role.id === roleId);
+    if (roleIndex < 0) {
+      return false;
+    }
+
+    const role = this.roles[roleIndex];
+    const updatedRole: RoleItem = { ...role, permissions };
+    const updatedRoles = [...this.roles];
+    updatedRoles[roleIndex] = updatedRole;
+    this.roles = updatedRoles;
+    return true;
+  }
+
+  private extractPermissionsFromRoleResponse(response: unknown): PermissionItem[] | null {
+    if (!response || typeof response !== 'object') {
+      return null;
+    }
+
+    const record = response as Record<string, unknown>;
+    if (Array.isArray(record['permissions'])) {
+      return record['permissions'] as PermissionItem[];
+    }
+
+    const role = record['role'];
+    if (role && typeof role === 'object') {
+      const roleRecord = role as Record<string, unknown>;
+      if (Array.isArray(roleRecord['permissions'])) {
+        return roleRecord['permissions'] as PermissionItem[];
+      }
+    }
+
+    return null;
+  }
+
+  private applyUserPermissionsFromResponse(userId: number, response: unknown): boolean {
+    const permissions = this.extractPermissionsFromUserResponse(response);
+    if (!permissions) {
+      return false;
+    }
+
+    const userIndex = this.users.findIndex((user) => user.id === userId);
+    if (userIndex < 0) {
+      return false;
+    }
+
+    const user = this.users[userIndex] as unknown as Record<string, unknown>;
+    const updatedUser: UserItem = {
+      ...(this.users[userIndex] as UserItem),
+      permissions,
+      permissionIds: permissions
+        .map((permission) => this.getPermissionId(permission))
+        .filter((id): id is number => id !== null)
+    };
+    (updatedUser as unknown as Record<string, unknown>)['direct_permissions'] = permissions;
+    if (Array.isArray(user['roles'])) {
+      (updatedUser as unknown as Record<string, unknown>)['roles'] = user['roles'];
+    }
+
+    const updatedUsers = [...this.users];
+    updatedUsers[userIndex] = updatedUser;
+    this.users = updatedUsers;
+    return true;
+  }
+
+  private addPermissionToUserLocally(userId: number, permissionId: number): void {
+    const userIndex = this.users.findIndex((user) => user.id === userId);
+    if (userIndex < 0) {
+      return;
+    }
+
+    const permission = this.permissions.find((item) => this.getPermissionId(item) === permissionId);
+    if (!permission) {
+      return;
+    }
+
+    const current = this.getResolvedUserPermissions(this.users[userIndex]);
+    const alreadyAssigned = current.some((item) => this.getPermissionId(item) === permissionId);
+    if (alreadyAssigned) {
+      return;
+    }
+
+    const nextPermissions = [...current, permission];
+    this.replaceUserPermissions(userIndex, nextPermissions);
+  }
+
+  private removePermissionFromUserLocally(userId: number, permissionId: number): void {
+    const userIndex = this.users.findIndex((user) => user.id === userId);
+    if (userIndex < 0) {
+      return;
+    }
+
+    const current = this.getResolvedUserPermissions(this.users[userIndex]);
+    const nextPermissions = current.filter((permission) => this.getPermissionId(permission) !== permissionId);
+    this.replaceUserPermissions(userIndex, nextPermissions);
+  }
+
+  private replaceUserPermissions(userIndex: number, permissions: PermissionItem[]): void {
+    const user = this.users[userIndex] as unknown as Record<string, unknown>;
+    const updatedUser: UserItem = {
+      ...(this.users[userIndex] as UserItem),
+      permissions,
+      permissionIds: permissions
+        .map((permission) => this.getPermissionId(permission))
+        .filter((id): id is number => id !== null)
+    };
+
+    (updatedUser as unknown as Record<string, unknown>)['direct_permissions'] = permissions;
+    if (Array.isArray(user['roles'])) {
+      (updatedUser as unknown as Record<string, unknown>)['roles'] = user['roles'];
+    }
+
+    const updatedUsers = [...this.users];
+    updatedUsers[userIndex] = updatedUser;
+    this.users = updatedUsers;
+  }
+
+  private extractPermissionsFromUserResponse(response: unknown): PermissionItem[] | null {
+    if (!response || typeof response !== 'object') {
+      return null;
+    }
+
+    const record = response as Record<string, unknown>;
+    if (Array.isArray(record['direct_permissions'])) {
+      return record['direct_permissions'] as PermissionItem[];
+    }
+    if (Array.isArray(record['permissions'])) {
+      return record['permissions'] as PermissionItem[];
+    }
+
+    const user = record['user'];
+    if (user && typeof user === 'object') {
+      const userRecord = user as Record<string, unknown>;
+      if (Array.isArray(userRecord['direct_permissions'])) {
+        return userRecord['direct_permissions'] as PermissionItem[];
+      }
+      if (Array.isArray(userRecord['permissions'])) {
+        return userRecord['permissions'] as PermissionItem[];
+      }
+    }
+
+    return null;
   }
 
   private translateEnglishPermissionName(name: string): string | null {

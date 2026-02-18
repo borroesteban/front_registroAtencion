@@ -1,0 +1,9 @@
+.panel-access-denied {
+  padding: 2rem 1rem;
+}
+
+.no-access-gif {
+  width: min(420px, 100%);
+  border-radius: 10px;
+  margin-top: 1rem;
+}

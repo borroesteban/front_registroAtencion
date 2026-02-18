@@ -7,14 +7,15 @@ import { Motivo } from '../../motivo';
 import { Persona } from '../../Persona';
 import { Historial } from '../../historial';
 import { ReactiveFormsModule } from '@angular/forms';
-import { NgForOf } from '@angular/common';
+import { NgForOf, NgIf } from '@angular/common';
 import { Router } from '@angular/router';
+import { catchError, of } from 'rxjs';
 
 
 @Component({
   selector: 'app-historial-form',
   standalone: true,
-  imports: [ReactiveFormsModule, NgForOf],
+  imports: [ReactiveFormsModule, NgForOf, NgIf],
   templateUrl: './historial-form.component.html',
   styleUrl: './historial-form.component.css'
 })
@@ -26,6 +27,8 @@ export class HistorialFormComponent implements OnInit, OnChanges {
 historialForm!: FormGroup;
 motivos: Motivo[] = [];
 personas: Persona[] = [];
+personasError = '';
+motivosError = '';
 
 constructor(
   private fb: FormBuilder,
@@ -54,16 +57,40 @@ ngOnChanges(changes: SimpleChanges): void {
 }
 
 loadMotivos(){
-  this.motivoService.getMotivoList().subscribe((data)=>{
-  this.motivos=data;
-  })
+  this.motivoService.getMotivoList()
+    .pipe(
+      catchError(() => {
+        this.motivosError = 'No se pudo cargar el listado de motivos para este usuario.';
+        return of([] as Motivo[]);
+      })
+    )
+    .subscribe((data) => {
+      this.motivos = data;
+      if (this.motivos.length === 0 && !this.motivosError) {
+        this.motivosError = 'No hay motivos disponibles.';
+      }
+    });
 }
 
 loadPersonas(){
-  this.personaService.getPersonaList().subscribe((data)=>{
-    this.personas=data;
-    this.preseleccionarPersona();
-  })
+  this.personaService.getPersonaList()
+    .pipe(
+      catchError(() => {
+        this.personasError = 'No se pudo cargar el listado de personas. Se usara la persona seleccionada.';
+        return of([] as Persona[]);
+      })
+    )
+    .subscribe((data) => {
+      const preseleccionada = this.personaPreseleccionada ? [this.personaPreseleccionada] : [];
+      const merged = [...data];
+
+      if (preseleccionada.length > 0 && !merged.some((persona) => persona.id === preseleccionada[0].id)) {
+        merged.unshift(preseleccionada[0]);
+      }
+
+      this.personas = merged;
+      this.preseleccionarPersona();
+    });
 }
 
 private preseleccionarPersona(): void {
