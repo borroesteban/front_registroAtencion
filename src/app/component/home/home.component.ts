@@ -7,16 +7,18 @@ import { Router} from '@angular/router';
 import { LoginComponent } from '../login/login.component';
 import { AuthService } from '../../service/auth.service';
 import { NavbarComponent } from '../navbar/navbar.component';
+import { HistorialFormComponent } from "../historial-form/historial-form.component";
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, PersonaFormComponent, ReactiveFormsModule, LoginComponent, NavbarComponent],
+  imports: [CommonModule, PersonaFormComponent, ReactiveFormsModule, LoginComponent, NavbarComponent, HistorialFormComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
 export class HomeComponent implements OnInit {
 
+  showHistorial = false;
   isLoginModalOpen = false;
   showPersonaForm = false;
 
@@ -141,4 +143,38 @@ export class HomeComponent implements OnInit {
       });
   }
 submitUser(){}
+
+abrirHistorial() {
+  if (!this.personaEncontrada) {
+    return;
+  }
+
+  this.showHistorial = true;
+  this.showPersonaForm = false;
+  this.personaForm.disable();
+}
+
+cerrarHistorial() {
+  this.showHistorial = false;
+}
+
+cancelarHistorial() {
+  this.showHistorial = false;
+  this.showPersonaForm = false;
+  this.personaEncontrada = null;
+  this.errorDni = '';
+  this.modoEdicion = false;
+
+  this.personaForm.reset({
+    id: '',
+    dni: { value: '', disabled: true },
+    firstName: '',
+    lastName: '',
+    cellphone: '',
+    email: '',
+    adress: ''
+  });
+
+  this.router.navigate(['/inicio']);
+}
 }

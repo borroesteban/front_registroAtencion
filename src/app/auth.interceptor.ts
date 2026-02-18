@@ -8,15 +8,12 @@ export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, ne
   const token = auth.getToken();
 
   if (!token) {
-    return next(req.clone({withCredentials:true}));
+    return next(req);
   }
 
   const authReq = req.clone({
-    setHeaders: { Authorization: `Token ${token}` },
-    
-    withCredentials:true
-  }
-);
+    setHeaders: { Authorization: `Token ${token}` }
+  });
 
   return next(authReq);
 };

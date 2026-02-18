@@ -1,76 +1,97 @@
 <app-navbar></app-navbar>
 <h3 class="text-center mb-4">Programa de Registro</h3>
 <input
-  inputmode="numeric"  
+  inputmode="numeric"
   type="number"
   class="form-control text-center mx-auto"
   style="width: 50%;"
   placeholder="Ingrese DNI..."
-  (input)="onDniChange($event)" autocomplete="off" id="buscador">
+  (input)="onDniChange($event)"
+  autocomplete="off"
+  id="buscador"
+/>
 
-  <form [formGroup]= "personaForm">
-
-  <div *ngIf="personaEncontrada" class="text-center mt-3 text-success">
-    ✅ Persona encontrada:
+<form [formGroup]="personaForm">
+  <div *ngIf="personaEncontrada && !showHistorial" class="text-center mt-3 text-success">
+    Persona encontrada:
   </div>
-<div *ngIf="personaEncontrada" id="personaEncontrada">
 
-        <div class="row mb-3">
-          <label for="inputDni" class="col-sm-2 col-form-label">DNI:</label>
-            <div class="col-sm-5">
-              <input type="text" class="form-control" formControlName="dni" >
-            </div>
-        </div>
-
-        <div class="row mb-3">
-           <label for="firstName" class="col-sm-2 col-form-label">Nombre:</label>
-              <div class="col-sm-5">
-               <input type="text" class="form-control" formControlName="firstName">
-              </div>
-        </div>
-
-        <div class="row mb-3">
-           <label for="lastName" class="col-sm-2 col-form-label">Apellido:</label>
-              <div class="col-sm-5">
-                <input type="text" class="form-control" formControlName="lastName">
-        </div>
+  <div *ngIf="personaEncontrada && !showHistorial" id="personaEncontrada">
+    <div class="row mb-3">
+      <label for="inputDni" class="col-sm-2 col-form-label">DNI:</label>
+      <div class="col-sm-5">
+        <input type="text" class="form-control" formControlName="dni" />
       </div>
-    
-      <div class="row mb-3">
-        <label for="cellphone" class="col-sm-2 col-form-label">Teléfono:</label>
-          <div class="col-sm-5">
-            <input type="text" class="form-control" formControlName="cellphone">
-          </div>
-      </div>
-
-      <div class="row mb-3">
-        <label for="email" class="col-sm-2 col-form-label">Email</label>
-          <div class="col-sm-5">
-            <input type="email" class="form-control" id="email" formControlName="email">
-          </div>
-      </div>
-
-      <div class="row mb-3">
-        <label for="adress" class="col-sm-2 col-form-label">Dirección:</label>
-          <div class="col-sm-5">
-            <input type="text" class="form-control" id="adress" formControlName="adress">
-          </div>
-      </div>
-      
-      <button class="btn btn-warning me-2" (click)="activarEdicion()" *ngIf="personaForm.disabled">Actualizar Datos</button>
-
-<button class="btn btn-danger me-2" (click)="guardarCambios()" *ngIf="modoEdicion">Guardar Cambios</button>
-<button class="btn btn-secondary me-2" *ngIf="modoEdicion" (click)="irAlInicio()">Cancelar</button>
-
-      <button class="btn btn-success" *ngIf="personaForm.disabled">Registrar Atención</button>
-      
     </div>
-  </form>
-  
-<div *ngIf="errorDni"  class="text-center mt-3 text-danger">
-  ❌ {{ errorDni }}
-  <br>
-  <button class="btn btn-primary mt-2" (click)="openPersonaForm()">Crear nueva persona</button>
+
+    <div class="row mb-3">
+      <label for="firstName" class="col-sm-2 col-form-label">Nombre:</label>
+      <div class="col-sm-5">
+        <input type="text" class="form-control" formControlName="firstName" />
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <label for="lastName" class="col-sm-2 col-form-label">Apellido:</label>
+      <div class="col-sm-5">
+        <input type="text" class="form-control" formControlName="lastName" />
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <label for="cellphone" class="col-sm-2 col-form-label">Telefono:</label>
+      <div class="col-sm-5">
+        <input type="text" class="form-control" formControlName="cellphone" />
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <label for="email" class="col-sm-2 col-form-label">Email</label>
+      <div class="col-sm-5">
+        <input type="email" class="form-control" id="email" formControlName="email" />
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <label for="adress" class="col-sm-2 col-form-label">Direccion:</label>
+      <div class="col-sm-5">
+        <input type="text" class="form-control" id="adress" formControlName="adress" />
+      </div>
+    </div>
+
+    <button type="button" class="btn btn-warning me-2" (click)="activarEdicion()" *ngIf="personaForm.disabled">
+      Actualizar Datos
+    </button>
+
+    <button type="button" class="btn btn-danger me-2" (click)="guardarCambios()" *ngIf="modoEdicion">
+      Guardar Cambios
+    </button>
+    <button type="button" class="btn btn-secondary me-2" *ngIf="modoEdicion" (click)="irAlInicio()">
+      Cancelar
+    </button>
+    <button type="button" class="btn btn-success" *ngIf="!showHistorial" (click)="abrirHistorial()">
+      Registrar Atencion
+    </button>
+  </div>
+
+  <div *ngIf="showHistorial">
+    <app-historial-form
+      [personaPreseleccionada]="personaEncontrada"
+      (guardadoExitoso)="cancelarHistorial()"
+    ></app-historial-form>
+    <button type="button" class="btn btn-outline-danger mt-2 me-2" (click)="cancelarHistorial()">
+      Cancelar
+    </button>
+    <button type="button" class="btn btn-secondary mt-2" (click)="cerrarHistorial()">
+      Volver
+    </button>
+  </div>
+</form>
+
+<div *ngIf="errorDni" class="text-center mt-3 text-danger">
+  {{ errorDni }}
+  <br />
+  <button type="button" class="btn btn-primary mt-2" (click)="openPersonaForm()">Crear nueva persona</button>
 </div>
 <div *ngIf="showPersonaForm">
   <app-persona-form></app-persona-form>

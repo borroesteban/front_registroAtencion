@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MotivoService } from '../../service/motivo.service';
 import { PersonaService } from '../../service/persona.service';
@@ -8,19 +8,20 @@ import { Persona } from '../../Persona';
 import { Historial } from '../../historial';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NgForOf } from '@angular/common';
-import { RouterLink } from '@angular/router';
-import { NgFor } from '@angular/common';
 import { Router } from '@angular/router';
 
 
 @Component({
   selector: 'app-historial-form',
   standalone: true,
-  imports: [ReactiveFormsModule, NgForOf, RouterLink, RouterLink],
+  imports: [ReactiveFormsModule, NgForOf],
   templateUrl: './historial-form.component.html',
   styleUrl: './historial-form.component.css'
 })
-export class HistorialFormComponent implements OnInit{
+export class HistorialFormComponent implements OnInit, OnChanges {
+
+@Input() personaPreseleccionada: Persona | null = null;
+@Output() guardadoExitoso = new EventEmitter<void>();
 
 historialForm!: FormGroup;
 motivos: Motivo[] = [];
@@ -31,17 +32,25 @@ constructor(
   private motivoService: MotivoService,
   private personaService: PersonaService,
   private historialService: HistorialService,
-  private router: Router 
-){}
+  private router: Router
+) {}
+
 ngOnInit(): void {
   this.historialForm = this.fb.group({
     personaId: [null, Validators.required],
     motivoId: [null, Validators.required],
     notes: ['']
   });
+
+  this.preseleccionarPersona();
   this.loadMotivos();
   this.loadPersonas();
+}
 
+ngOnChanges(changes: SimpleChanges): void {
+  if (changes['personaPreseleccionada']) {
+    this.preseleccionarPersona();
+  }
 }
 
 loadMotivos(){
@@ -53,17 +62,28 @@ loadMotivos(){
 loadPersonas(){
   this.personaService.getPersonaList().subscribe((data)=>{
     this.personas=data;
+    this.preseleccionarPersona();
   })
+}
+
+private preseleccionarPersona(): void {
+  const personaId = this.personaPreseleccionada?.id ?? null;
+  if (!this.historialForm || personaId === null) {
+    return;
+  }
+
+  this.historialForm.patchValue({ personaId });
 }
 
 submit(): void {
   if (this.historialForm.valid) {
+    const personaSeleccionada = this.personas.find(
+      p => p.id === this.historialForm.value.personaId
+    ) ?? this.personaPreseleccionada ?? null;
 
     const newHistorial: Historial = {
       notes: this.historialForm.value.notes,
-      persona: this.personas.find(
-        p => p.id === this.historialForm.value.personaId
-      ) ?? null,
+      persona: personaSeleccionada,
       motivo: this.motivos.find(
         m => m.motivoId === this.historialForm.value.motivoId
       ) ?? null
@@ -72,7 +92,8 @@ submit(): void {
     this.historialService.createHistorial(newHistorial).subscribe({
       next: () => {
       alert('Historial guardado con éxito');
-      this.router.navigate(['/historial']);
+      this.guardadoExitoso.emit();
+      this.router.navigate(['/inicio']);
     },
     error: () => {
       alert('Error al guardar el historial');

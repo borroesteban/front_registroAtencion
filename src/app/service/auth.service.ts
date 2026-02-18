@@ -16,6 +16,7 @@ interface LoginResponse {
 export class AuthService {
   private readonly tokenKey = 'auth_token';
   private readonly usernameKey = 'auth_username';
+  private readonly userIdKey = 'auth_user_id';
 
   constructor(
     private http: HttpClient,
@@ -27,9 +28,16 @@ export class AuthService {
   }
 
   login(username: string, password: string) {
+    this.clearSession();
     return this.http
       .post<LoginResponse>(`${environment.api}/login/`, { username, password })
-      .pipe(tap((res) => this.setSession(res.token, res.user?.username ?? username)));
+      .pipe(
+        tap((res) => this.setSession(res.token, res.user?.username ?? username, res.user?.id)),
+        catchError((error) => {
+          this.clearSession();
+          throw error;
+        })
+      );
   }
 
     logout() {
@@ -80,13 +88,28 @@ export class AuthService {
     return localStorage.getItem(this.usernameKey);
   }
 
-  private setSession(token: string, username?: string): void {
+  getUserId(): number | null {
+    if (!this.canUseStorage) {
+      return null;
+    }
+    const value = localStorage.getItem(this.userIdKey);
+    if (!value) {
+      return null;
+    }
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : null;
+  }
+
+  private setSession(token: string, username?: string, userId?: number): void {
     if (!this.canUseStorage) {
       return;
     }
     localStorage.setItem(this.tokenKey, token);
     if (username) {
       this.setUsername(username);
+    }
+    if (typeof userId === 'number') {
+      localStorage.setItem(this.userIdKey, String(userId));
     }
   }
 
@@ -125,6 +148,7 @@ export class AuthService {
     }
     localStorage.removeItem(this.tokenKey);
     localStorage.removeItem(this.usernameKey);
+    localStorage.removeItem(this.userIdKey);
   }
 }
 

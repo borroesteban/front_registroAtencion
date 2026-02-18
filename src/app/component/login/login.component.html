@@ -7,3 +7,7 @@
 
   <button type="submit" class="btn btn-primary">Confirmar</button>
 </form>
+
+<p class="text-danger mt-2" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+<a routerLink="/registro-usuario">Solicitar usuario nuevo</a>

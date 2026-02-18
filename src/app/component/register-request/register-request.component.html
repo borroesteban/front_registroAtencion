@@ -1,0 +1,35 @@
+<div class="register-container">
+  <h2>Solicitud de Registro</h2>
+  <p class="subtitle">
+    Completa el formulario y se generara una solicitud para que el administrador habilite tu acceso.
+  </p>
+
+  <form [formGroup]="registerRequestForm" (ngSubmit)="submit()">
+    <label for="username">Usuario</label>
+    <input id="username" type="text" formControlName="username" />
+    <small class="error" *ngIf="registerRequestForm.get('username')?.touched && registerRequestForm.get('username')?.invalid">
+      El usuario es obligatorio (minimo 3 caracteres).
+    </small>
+
+    <label for="password">Contraseña</label>
+    <input id="password" type="password" formControlName="password" />
+    <small class="error" *ngIf="registerRequestForm.get('password')?.touched && registerRequestForm.get('password')?.invalid">
+      La contraseña es obligatoria (minimo 3 caracteres).
+    </small>
+
+    <label for="firstName">Nombre</label>
+    <input id="firstName" type="text" formControlName="firstName" />
+
+    <label for="lastName">Apellido</label>
+    <input id="lastName" type="text" formControlName="lastName" />
+
+    <button type="submit" [disabled]="submitting">
+      {{ submitting ? 'Enviando...' : 'Enviar solicitud' }}
+    </button>
+  </form>
+
+  <p class="success" *ngIf="successMessage">{{ successMessage }}</p>
+  <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+  <a routerLink="/inicio">Volver al inicio</a>
+</div>
