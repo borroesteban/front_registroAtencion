@@ -38,10 +38,6 @@ constructor(
     return this.auth.getUsername() ?? 'usuario';
   }
 
-  get userId(): number | null {
-    return this.auth.getUserId();
-  }
-
   onLogout(): void {
     this.auth.logout().subscribe(() => {
       this.closeLoginModal();
