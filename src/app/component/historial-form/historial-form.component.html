@@ -7,6 +7,7 @@
   <!-- Persona -->
   <div class="mb-3">
     <label class="form-label">Persona</label>
+    <small class="text-warning d-block mb-2" *ngIf="personasError">{{ personasError }}</small>
     <select class="form-select" formControlName="personaId">
       <option [ngValue]="null">Seleccione una persona</option>
       <option *ngFor="let p of personas" [ngValue]="p.id">
@@ -18,6 +19,7 @@
   <!-- Motivo -->
   <div class="mb-3">
     <label class="form-label">Motivo</label>
+    <small class="text-warning d-block mb-2" *ngIf="motivosError">{{ motivosError }}</small>
     <select class="form-select" formControlName="motivoId">
       <option [ngValue]="null">Seleccione un motivo</option>
       <option *ngFor="let m of motivos" [ngValue]="m.motivoId">
@@ -35,12 +37,6 @@
   <!-- Botones -->
   <button type="submit" class="btn btn-success">
     Guardar
-  </button>
-
-  <button type="button"
-          class="btn btn-secondary ms-2"
-          [routerLink]="['/historial']">
-    Volver
   </button>
 
 </form>

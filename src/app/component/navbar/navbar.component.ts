@@ -1,16 +1,14 @@
-import { Component, inject} from '@angular/core';
+import { Component } from '@angular/core';
 import { AuthService } from '../../service/auth.service';
-import { HomeComponent } from '../home/home.component';
-import { RouterLink, Router} from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { LoginComponent } from '../login/login.component';
 import { CommonModule } from '@angular/common';
-// Agrega 'inject' aquí:
 
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [LoginComponent, CommonModule],
+  imports: [LoginComponent, CommonModule, RouterLink],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css'
 })
@@ -22,12 +20,10 @@ constructor(
   private auth: AuthService
 ){}
 
-private authService = inject(AuthService); 
-
   isLoginModalOpen = false;
 
   get isLoggedIn(): boolean {
-    return this.authService.isLoggedIn();
+    return this.auth.isLoggedIn();
   }
 
   closeLoginModal(): void {
@@ -39,22 +35,23 @@ private authService = inject(AuthService);
   }
 
   get username(): string {
-    return this.authService.getUsername() ?? 'usuario';
+    return this.auth.getUsername() ?? 'usuario';
   }
 
-    onLogout(): void {
-    this.authService.logout().subscribe(() => {
+  get userId(): number | null {
+    return this.auth.getUserId();
+  }
+
+  onLogout(): void {
+    this.auth.logout().subscribe(() => {
       this.closeLoginModal();
       this.router.navigate(['/inicio']);
     });
   }
 
-    onLoginSuccess(): void {
+  onLoginSuccess(): void {
     this.closeLoginModal();
     this.auth.ensureUsername().subscribe();
   }
 
-    irAlInicio(){
-    location.reload();
-  }
 }

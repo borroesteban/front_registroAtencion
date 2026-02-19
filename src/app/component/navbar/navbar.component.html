@@ -14,14 +14,15 @@
       <div id="navBar">
 <ul class="nav nav-tabs">
   <li class="nav-item">
-    <a class="nav-link active" aria-current="page" href="#">Inicio</a>
+    <a class="nav-link active" aria-current="page" routerLink="/inicio">Inicio</a>
   </li>
   <li class="nav-item">
-    <a class="nav-link" href='/abm'>Registros</a>
+    <a class="nav-link" routerLink="/panel-visitas">Panel de visitas</a>
   </li>
-    <li class="nav-item">
-    <a class="nav-link" type="image/png" href='assets/denis.gif' target="_blank">Panel Admin</a>
+  <li class="nav-item">
+    <a class="nav-link" routerLink="/abm">Panel de administracion</a>
   </li>
+  <li>
  <div class="d-flex">
     <li>
       <div class="position-absolute top-1 end-0 me-3 d-flex align-items-center gap-2">
@@ -37,7 +38,7 @@
         </button>
 
         <span class="fw-semibold text-dark" [class.d-none]="!isLoggedIn">
-          Hola, {{ username }}
+          Hola, {{ username }} <small *ngIf="userId !== null">(id: {{ userId }})</small>
         </span>
 
         <button

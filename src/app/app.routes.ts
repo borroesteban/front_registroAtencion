@@ -7,6 +7,9 @@ import { PersonaFormComponent } from './component/persona-form/persona-form.comp
 import { MotivoFormComponent } from './component/motivo-form/motivo-form.component';
 import { HomeComponent } from './component/home/home.component';
 import { AbmComponent } from './component/abm/abm.component';
+import { PanelAdminComponent } from './component/panel-admin/panel-admin.component';
+import { RegisterRequestComponent } from './component/register-request/register-request.component';
+import { authGuard } from './auth.guard';
 
 
 export const routes: Routes = [
@@ -17,6 +20,10 @@ export const routes: Routes = [
 {path: 'nuevo-historial', component: HistorialFormComponent},
 {path: 'nueva-persona', component: PersonaFormComponent },
 {path: 'nuevo-motivo', component: MotivoFormComponent },
-{path: 'abm',component: AbmComponent},
+{path: 'registro-usuario', component: RegisterRequestComponent},
+{path: 'abm', component: PanelAdminComponent, canActivate: [authGuard]},
+{path: 'abm-legacy', component: AbmComponent, canActivate: [authGuard]},
+{path: 'panel-visitas', component: AbmComponent, canActivate: [authGuard]},
+{path: 'panel-admin', component: PanelAdminComponent, canActivate: [authGuard]},
 {path : '', redirectTo: 'inicio', pathMatch: 'full'}
 ];

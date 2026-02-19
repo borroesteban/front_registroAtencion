@@ -1,0 +1,200 @@
+<app-navbar></app-navbar>
+
+<div class="panel-admin" *ngIf="hasAdminPermission; else noAdminAccess">
+  <header class="panel-header">
+    <h2>Panel de Administracion</h2>
+    <button type="button" class="btn btn-outline-primary" (click)="refreshData()" [disabled]="loading">
+      {{ loading ? 'Actualizando...' : 'Actualizar datos' }}
+    </button>
+  </header>
+
+  <p class="feedback success" *ngIf="feedbackKind === 'success'">{{ feedbackMessage }}</p>
+  <p class="feedback error" *ngIf="feedbackKind === 'error'">{{ feedbackMessage }}</p>
+
+  <section class="panel-section">
+    <h3>Solicitudes Pendientes</h3>
+
+    <div class="empty" *ngIf="pendingRequests.length === 0">
+      No hay solicitudes pendientes.
+    </div>
+
+    <table class="table table-striped" *ngIf="pendingRequests.length > 0">
+      <thead>
+        <tr>
+          <th>Usuario</th>
+          <th>Email</th>
+          <th>Nombre</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let request of pendingRequests">
+          <td>{{ request.username }}</td>
+          <td>{{ request.email }}</td>
+          <td>{{ request.firstName }} {{ request.lastName }}</td>
+          <td>{{ request.status }}</td>
+          <td class="actions">
+            <button type="button" class="btn btn-sm btn-success" (click)="approveRequest(request.id)">Aprobar</button>
+            <button type="button" class="btn btn-sm btn-outline-danger" (click)="rejectRequest(request.id)">Rechazar</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="panel-section">
+    <h3>Usuarios: Roles y Permisos</h3>
+
+    <div class="form-grid">
+      <form [formGroup]="assignUserRoleForm" (ngSubmit)="assignRoleToUser()" class="inline-form">
+        <h4>Asignar Rol a Usuario</h4>
+        <select formControlName="userId">
+          <option [ngValue]="null">Seleccione usuario</option>
+          <option *ngFor="let user of users" [ngValue]="user.id">{{ user.username }}</option>
+        </select>
+        <select formControlName="roleId">
+          <option [ngValue]="null">Seleccione rol</option>
+          <option *ngFor="let role of roles" [ngValue]="role.id">{{ role.name }}</option>
+        </select>
+        <button type="submit" class="btn btn-primary btn-sm">Asignar rol</button>
+      </form>
+
+      <form [formGroup]="assignUserPermissionForm" (ngSubmit)="assignPermissionToUser()" class="inline-form">
+        <h4>Asignar Permiso Directo a Usuario</h4>
+        <select formControlName="userId">
+          <option [ngValue]="null">Seleccione usuario</option>
+          <option *ngFor="let user of users" [ngValue]="user.id">{{ user.username }}</option>
+        </select>
+        <select formControlName="permissionId">
+          <option [ngValue]="null">Seleccione permiso</option>
+          <option *ngFor="let permission of permissions" [ngValue]="permission.id">
+            {{ getPermissionNameEs(permission) }} ({{ getPermissionCode(permission) }})
+          </option>
+        </select>
+        <button type="submit" class="btn btn-primary btn-sm">Asignar permiso</button>
+      </form>
+    </div>
+
+    <div class="cards-grid">
+      <article class="item-card" *ngFor="let user of users">
+        <h4>{{ user.username }}</h4>
+        <p>{{ user.email }}</p>
+        <button type="button" class="btn btn-sm btn-outline-danger" (click)="deleteUser(user.id)">
+          Eliminar
+        </button>
+
+        <div class="tags-block">
+          <h5>Roles</h5>
+          <div class="tag-list" *ngIf="getResolvedUserRoles(user).length > 0; else noRoles">
+            <span class="tag" *ngFor="let role of getResolvedUserRoles(user)">
+              {{ role.name }}
+              <button type="button" (click)="removeRoleFromUser(user.id, role.id)">x</button>
+            </span>
+          </div>
+          <ng-template #noRoles><small>Sin roles asignados</small></ng-template>
+        </div>
+
+        <div class="tags-block">
+          <h5>Permisos Directos</h5>
+          <div class="tag-list" *ngIf="getResolvedUserPermissions(user).length > 0; else noUserPermissions">
+            <span class="tag" *ngFor="let permission of getResolvedUserPermissions(user)">
+              {{ getPermissionNameEs(permission) }}
+              <button type="button" (click)="onRemovePermissionFromUser(user.id, permission)">x</button>
+            </span>
+          </div>
+          <ng-template #noUserPermissions><small>Sin permisos directos</small></ng-template>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="panel-section">
+    <h3>Roles (Packs de Permisos)</h3>
+    <button type="button" class="btn btn-sm btn-outline-primary mb-3" (click)="createPanelVisitasRole()">
+      Crear rol ver_panel_visitas
+    </button>
+
+    <div class="form-grid">
+      <form [formGroup]="createRoleForm" (ngSubmit)="createRole()" class="inline-form">
+        <h4>Crear Nuevo Rol</h4>
+        <input type="text" formControlName="name" placeholder="Nombre del rol" />
+        <input type="text" formControlName="description" placeholder="Descripcion" />
+        <button type="submit" class="btn btn-primary btn-sm">Crear rol</button>
+      </form>
+
+      <form [formGroup]="assignRolePermissionForm" (ngSubmit)="assignPermissionToRole()" class="inline-form">
+        <h4>Agregar Permiso a Rol</h4>
+        <select formControlName="roleId">
+          <option [ngValue]="null">Seleccione rol</option>
+          <option *ngFor="let role of roles" [ngValue]="role.id">{{ role.name }}</option>
+        </select>
+        <select formControlName="permissionId">
+          <option [ngValue]="null">Seleccione permiso</option>
+          <option *ngFor="let permission of permissions" [ngValue]="permission.id">
+            {{ getPermissionNameEs(permission) }} ({{ getPermissionCode(permission) }})
+          </option>
+        </select>
+        <button type="submit" class="btn btn-primary btn-sm">Agregar permiso</button>
+      </form>
+    </div>
+
+    <div class="cards-grid">
+      <article class="item-card" *ngFor="let role of roles">
+        <h4>{{ role.name }}</h4>
+        <p>{{ role.description }}</p>
+
+        <div class="tags-block">
+          <h5>Permisos del rol</h5>
+          <div class="tag-list" *ngIf="getResolvedRolePermissions(role).length > 0; else noRolePermissions">
+            <span class="tag" *ngFor="let permission of getResolvedRolePermissions(role)">
+              {{ getPermissionNameEs(permission) }}
+              <button type="button" (click)="onRemovePermissionFromRole(role.id, permission)">x</button>
+            </span>
+          </div>
+          <ng-template #noRolePermissions><small>Sin permisos en este rol</small></ng-template>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="panel-section">
+    <h3>Permisos</h3>
+
+    <form [formGroup]="createPermissionForm" (ngSubmit)="createPermission()" class="inline-form create-permission">
+      <h4>Crear Nuevo Permiso</h4>
+      <input type="text" formControlName="code" placeholder="Codigo (ej: ver_historial)" />
+      <input type="text" formControlName="name" placeholder="Nombre visible" />
+      <input type="text" formControlName="appLabel" placeholder="App label (opcional)" />
+      <input type="text" formControlName="description" placeholder="Descripcion" />
+      <button type="submit" class="btn btn-primary btn-sm">Crear permiso</button>
+    </form>
+
+    <table class="table table-sm">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Codigo</th>
+          <th>Nombre</th>
+          <th>App</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let permission of permissions">
+          <td>{{ permission.id }}</td>
+          <td>{{ getPermissionCode(permission) }}</td>
+          <td>{{ getPermissionNameEs(permission) }}</td>
+          <td>{{ getPermissionAppLabel(permission) }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+</div>
+
+<ng-template #noAdminAccess>
+  <div class="panel-admin no-access">
+    <h2>Sin permiso para ver el panel de administracion</h2>
+    <p>Tu usuario no tiene permisos suficientes para esta seccion.</p>
+    <img src="assets/denis.gif" alt="Sin permiso para panel admin" class="no-access-gif" />
+  </div>
+</ng-template>
