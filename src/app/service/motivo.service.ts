@@ -12,6 +12,7 @@ export class MotivoService {
   private readonly compatApi = `${environment.api}/motivos`;
   private readonly springApi = `${environment.api}/spring/api/motivos`;
 
+  private api : string = environment.api + '/spring/api/motivos';
   constructor(private http: HttpClient) {}
 
   getMotivoList(): Observable<Motivo[]> {

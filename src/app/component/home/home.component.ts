@@ -12,7 +12,7 @@ import { HistorialFormComponent } from "../historial-form/historial-form.compone
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, PersonaFormComponent, ReactiveFormsModule, LoginComponent, NavbarComponent, HistorialFormComponent],
+  imports: [CommonModule, PersonaFormComponent, ReactiveFormsModule, NavbarComponent, HistorialFormComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })

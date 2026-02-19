@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, catchError, map, throwError } from 'rxjs';
+import { Observable, catchError, map, throwError, from } from 'rxjs';
 import { Persona } from '../Persona';
 import { environment } from '../../environments/environment';
 
@@ -11,6 +11,11 @@ export class PersonaService {
   private readonly middlewareApi = `${environment.api}/api/personas`;
   private readonly springApi = `${environment.api}/spring/api/personas`;
 
+  private api : string = environment.api + '/spring/api/personas';
+  
+/*'http://10.0.0.155:8000/spring/api/personas'*/ 
+/* http://localhost:8080/api/personas */
+/*${this.baseUrl}/spring/api/personas/dni/${dni}*/ 
   constructor(private http: HttpClient) {}
 
   getPersonaList(): Observable<Persona[]> {
