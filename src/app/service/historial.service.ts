@@ -2,12 +2,13 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Historial } from '../historial';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class HistorialService {
-  private api : string = 'http://localhost:8080/api/historial';
+  private api : string = environment.api + '/spring/api/historial';
 
   constructor(private http:HttpClient) { }
   getHistorialList():Observable<Historial []>{

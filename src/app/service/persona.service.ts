@@ -1,16 +1,19 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { from, Observable } from 'rxjs';
 import { Persona } from '../Persona';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PersonaService {
 
-  private api : string = 'http://10.0.0.155:8000/spring/api/personas';
-                       /* http://localhost:8080/api/personas */
-                       /*${this.baseUrl}/spring/api/personas/dni/${dni}*/
+  private api : string = environment.api + '/spring/api/personas';
+  
+/*'http://10.0.0.155:8000/spring/api/personas'*/ 
+/* http://localhost:8080/api/personas */
+/*${this.baseUrl}/spring/api/personas/dni/${dni}*/ 
 
   constructor(private http:HttpClient) { }
 

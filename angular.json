@@ -22,13 +22,15 @@
             "tsConfig": "tsconfig.app.json",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              "src/favicon.png"
             ],
             "styles": [
              "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "src/styles.css"
             ],
-            "scripts": [ "node_modules/bootstrap/dist/js/bootstrap.min.js"
+            "scripts": [
+              "node_modules/bootstrap/dist/js/bootstrap.min.js"
           ],
             "server": "src/main.server.ts",
             "prerender": true,
