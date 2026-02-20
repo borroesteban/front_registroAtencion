@@ -22,8 +22,8 @@
       <thead>
         <tr>
           <th>Usuario</th>
-          <th>Email</th>
           <th>Nombre</th>
+          <th>Apellido</th>
           <th>Estado</th>
           <th>Acciones</th>
         </tr>
@@ -31,8 +31,8 @@
       <tbody>
         <tr *ngFor="let request of pendingRequests">
           <td>{{ request.username }}</td>
-          <td>{{ request.email }}</td>
-          <td>{{ request.firstName }} {{ request.lastName }}</td>
+          <td>{{ request.firstName }}</td>
+          <td>{{ request.lastName }}</td>
           <td>{{ request.status }}</td>
           <td class="actions">
             <button type="button" class="btn btn-sm btn-success" (click)="approveRequest(request.id)">Aprobar</button>
@@ -111,10 +111,6 @@
 
   <section class="panel-section">
     <h3>Roles (Packs de Permisos)</h3>
-    <button type="button" class="btn btn-sm btn-outline-primary mb-3" (click)="createPanelVisitasRole()">
-      Crear rol ver_panel_visitas
-    </button>
-
     <div class="form-grid">
       <form [formGroup]="createRoleForm" (ngSubmit)="createRole()" class="inline-form">
         <h4>Crear Nuevo Rol</h4>
