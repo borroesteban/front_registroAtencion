@@ -1,7 +1,7 @@
 <app-navbar></app-navbar>
 <div class="d-flex" *ngIf="hasPanelAccess">
-  <h2 style="text-align:start;  margin-top: 1%; margin-left:0.5%">Panel de visitas</h2>
-</div> <!-- Faltaba cerrar este div para que no envuelva al resto -->
+  <h2 style="text-align:start; margin-top: 1%; margin-left:0.5%">Panel de visitas</h2>
+</div>
 
 <div class="text-center mt-4" *ngIf="loadingAccess">
   Verificando acceso al panel de visitas...
@@ -12,23 +12,77 @@
     <div class="col-2">
       <h4 style="text-align:start;">Menu</h4>
       <ol>
+        <li><button type="button" class="btn btn-outline-primary" style="margin: 1%;" (click)="showCharts()">Ver Graficos</button></li>
         <li><button type="button" class="btn btn-outline-secondary" style="margin: 1%;" (click)="showPersonaList()">Listar Personas</button></li>
         <li><button type="button" class="btn btn-outline-secondary" style="margin: 1%;" (click)="showMotivoList()">Listar Motivos</button></li>
         <li><button type="button" class="btn btn-outline-secondary" style="margin: 1%;" (click)="showHistorialList()">Listar Historial</button></li>
-      <li>
-        <button type="button" class="btn btn-outline-warning" style="margin: 1%;" (click)="exportPDF()" > exportar pdf</button>
-      </li>
-      <li>
-        <button type="button" class="btn btn-outline-warning" style="margin: 1%;" (click)=" exportExcel()">
-          exportar xls
-        </button>
-      </li>
+        <li><button type="button" class="btn btn-outline-warning" style="margin: 1%;" (click)="exportPDF()">Exportar PDF</button></li>
+        <li><button type="button" class="btn btn-outline-warning" style="margin: 1%;" (click)="exportExcel()">Exportar XLS</button></li>
       </ol>
     </div>
-    <div class="col-10" style="text-align: center;" id="contenedorTabla" #contenedorTabla>
-      <app-persona-list *ngIf="personaList" ></app-persona-list>
-      <app-motivo-list *ngIf="motivoList" ></app-motivo-list>
-      <app-historial-list *ngIf="historialList" ></app-historial-list>
+
+    <div class="col-10 panel-main">
+      <section class="charts-section" #chartsContainer *ngIf="chartsView">
+        <div class="charts-head">
+          <h4>Graficos de atenciones</h4>
+          <small *ngIf="fromDate && toDate">Periodo: {{ fromDate }} a {{ toDate }}</small>
+          <small *ngIf="!fromDate || !toDate">Selecciona un rango de fechas</small>
+        </div>
+
+        <div class="charts-filters">
+          <label>
+            Desde
+            <input type="date" [(ngModel)]="fromDate" />
+          </label>
+          <label>
+            Hasta
+            <input type="date" [(ngModel)]="toDate" />
+          </label>
+          <button type="button" class="btn btn-primary btn-sm" (click)="generateCharts()">
+            Generar graficos
+          </button>
+        </div>
+
+        <div class="text-center mt-2" *ngIf="chartsLoading">
+          Cargando graficos...
+        </div>
+
+        <p class="charts-error" *ngIf="!chartsLoading && chartsError">
+          {{ chartsError }}
+        </p>
+
+        <div class="text-center mt-2" *ngIf="!chartsLoading && !chartsError && !hasChartData()">
+          No hay datos de graficos para mostrar.
+        </div>
+
+        <div class="charts-grid" *ngIf="!chartsLoading && hasChartData()">
+          <article class="chart-card">
+            <h5>Atenciones por dia</h5>
+            <div class="chart-image-wrap" *ngIf="imgDia">
+              <img [src]="imgDia" alt="Atenciones por dia" class="chart-image" />
+            </div>
+            <div class="chart-empty" *ngIf="!imgDia">
+              No se recibio imagen para atenciones por dia.
+            </div>
+          </article>
+
+          <article class="chart-card">
+            <h5>Atenciones por motivo</h5>
+            <div class="chart-image-wrap" *ngIf="imgMotivo">
+              <img [src]="imgMotivo" alt="Atenciones por motivo" class="chart-image" />
+            </div>
+            <div class="chart-empty" *ngIf="!imgMotivo">
+              No se recibio imagen para atenciones por motivo.
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <div style="text-align: center;" id="contenedorTabla" #contenedorTabla>
+        <app-persona-list *ngIf="personaList"></app-persona-list>
+        <app-motivo-list *ngIf="motivoList"></app-motivo-list>
+        <app-historial-list *ngIf="historialList"></app-historial-list>
+      </div>
     </div>
   </div>
 </div>
@@ -38,4 +92,3 @@
   <p>Tu usuario no tiene el rol requerido para esta seccion.</p>
   <img src="assets/denis.gif" alt="Sin permiso para panel de visitas" class="no-access-gif" />
 </div>
-

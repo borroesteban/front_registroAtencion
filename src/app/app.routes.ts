@@ -14,12 +14,12 @@ import { authGuard } from './auth.guard';
 
 export const routes: Routes = [
 {path:'inicio', component: HomeComponent},
-{path : 'personas', component: PersonaListComponent},
-{path : 'motivos', component: MotivoListComponent},
-{path: 'historial', component: HistorialListComponent},
-{path: 'nuevo-historial', component: HistorialFormComponent},
-{path: 'nueva-persona', component: PersonaFormComponent },
-{path: 'nuevo-motivo', component: MotivoFormComponent },
+{path : 'personas', component: PersonaListComponent, canActivate: [authGuard]},
+{path : 'motivos', component: MotivoListComponent, canActivate: [authGuard]},
+{path: 'historial', component: HistorialListComponent, canActivate: [authGuard]},
+{path: 'nuevo-historial', component: HistorialFormComponent, canActivate: [authGuard]},
+{path: 'nueva-persona', component: PersonaFormComponent, canActivate: [authGuard]},
+{path: 'nuevo-motivo', component: MotivoFormComponent, canActivate: [authGuard]},
 {path: 'registro-usuario', component: RegisterRequestComponent},
 {path: 'abm', component: PanelAdminComponent, canActivate: [authGuard]},
 {path: 'abm-legacy', component: AbmComponent, canActivate: [authGuard]},
